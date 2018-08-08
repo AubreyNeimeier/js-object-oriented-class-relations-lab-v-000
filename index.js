@@ -19,12 +19,21 @@ class Driver{
         })
     }
 
+
     passengers(){
-        return store.passengers.filter(pass =>{
-            return pass.driverId === this.id
+        return this.trips().map(trip => {return trip.passenger()
         })
     }
 }
+
+ /* notice how this logic is EXACTLY the same as trips() above? THis code was close to working except we needed a way to return the passenger on the trip (the trip that matches criteria)   
+    passengers(){
+        return store.trips.filter(trip => {
+            return trip.driverId === this.id
+        })
+    }
+
+*/
 
 
 class Passenger{
@@ -40,27 +49,36 @@ class Passenger{
         })
     }
 
+    drivers(){
+        return this.trips().map(trip => {return trip.driver()
+        })
+    }
+
 
 }
 
 class Trip{
     constructor(driver, passenger){
-        this.driverId = driver.id;
-        this.passengerId = passenger.id;
         this.id = ++ tripId;
+
+        if(driver){
+            this.driverId = driver.id;
+        }
+
+        if(passenger){
+            this.passengerId = passenger.id;
+        }
 
         store.trips.push(this)
     }
 
     driver(){
         return store.drivers.find(function(driver){
-            return driver.tripId === this.id
-        })
+            return driver.id === this.driverId}.bind(this))
     }
 
     passenger(){
         return store.passengers.find(function(pass){
-            return pass.tripId === this.id
-        })
+            return pass.id === this.passengerId}.bind(this))
     }
 }
